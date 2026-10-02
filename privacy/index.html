@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Privacidad · ¿Qué comemos?</title>
+    <style>
+      :root { --bg: #faf7f2; --text: #25231f; --soft: #5d5a52; --primary: #3a7549; }
+      @media (prefers-color-scheme: dark) { :root { --bg: #1b1a17; --text: #f2efe8; --soft: #bdb8ad; --primary: #7dbb8a; } }
+      body { margin: 0; padding: 24px 16px 48px; background: var(--bg); color: var(--text); font: 17px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; }
+      main { max-width: 720px; margin: 0 auto; }
+      h1 { font-size: 28px; line-height: 1.2; }
+      h2 { font-size: 20px; margin-top: 32px; }
+      p, li { color: var(--soft); }
+      strong { color: var(--text); }
+      a { color: var(--primary); }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Política de privacidad de ¿Qué comemos?</h1>
+      <p>Última actualización: [FECHA]. Responsable: [NOMBRE DEL TITULAR], contacto: [CORREO DE CONTACTO].</p>
+
+      <h2>En resumen</h2>
+      <p>Lo que guardas en la app (inventario, recetas, plan, lista de la compra, ajustes) se queda <strong>en tu
+        móvil</strong>. No hay cuenta, ni registro, ni analítica. Solo salen datos del móvil en dos casos que tú eliges o
+        ves: la lista de la compra si la compartes, y los anuncios.</p>
+
+      <h2>1. Datos que se quedan en tu móvil</h2>
+      <p>Todo lo que apuntas en la app se guarda en una base de datos dentro del móvil. Si tienes activada la copia de
+        seguridad de Android, el sistema puede incluirla en tu copia (en tu cuenta de Google, gestionada por Google). Desde
+        Ajustes → «Borrar todos mis datos» lo borras todo; desinstalar la app también lo borra.</p>
+
+      <h2>2. Lista de la compra compartida (solo si la compartes)</h2>
+      <p>Si decides compartir la lista con otras personas, se guardan en un servidor de <strong>Supabase</strong>
+        (proveedor de alojamiento, en la Unión Europea) mientras la compartáis:</p>
+      <ul>
+        <li>las líneas de la lista: nombre del producto, cantidad, unidad, precio, si está comprado y de qué receta sale;</li>
+        <li>el nombre que pongas (opcional) para que los demás sepan quién ha apuntado qué;</li>
+        <li>un identificador anónimo de sesión (no se pide email, teléfono ni contraseña);</li>
+      </ul>
+      <p>Solo pueden verlo las personas de esa lista. Al tocar «Dejar de compartir» se borran del servidor tu sesión, tu
+        nombre; la lista se borra cuando sale la última persona. Lo que hayas apuntado sigue en
+        la lista de los demás mientras ellos la mantengan.</p>
+      <p>Base legal: la ejecución del servicio que pides (compartir la lista).</p>
+
+      <h2>3. Avisos</h2>
+      <p>Los avisos de caducidad, del plan y de los temporizadores se programan en el propio móvil: no pasan por ningún
+        servidor.</p>
+
+      <h2>4. Anuncios</h2>
+      <p>La app es gratuita y muestra anuncios de <strong>Google AdMob</strong>, <strong>no personalizados</strong>, en
+        algunas pantallas de consulta (nunca al cocinar, en el modo tienda ni al escribir). Para mostrarlos, Google puede
+        recibir datos técnicos del móvil (como la dirección IP y el modelo). Nada de tu inventario, recetas, plan ni lista.
+        Más información: <a href="https://policies.google.com/technologies/partner-sites">cómo usa Google los datos</a>.</p>
+
+      <h2>5. Lo que no hacemos</h2>
+      <ul>
+        <li>No vendemos ni cedemos datos.</li>
+        <li>No usamos analítica ni seguimiento.</li>
+        <li>No pedimos cuenta, email, teléfono ni ubicación.</li>
+      </ul>
+
+      <h2>6. Tus derechos</h2>
+      <p>Puedes acceder a tus datos, corregirlos o borrarlos desde la propia app (Ajustes y «Dejar de compartir»). Para
+        cualquier otra solicitud, escribe a [CORREO DE CONTACTO]. También puedes reclamar ante la autoridad de protección
+        de datos (en España, la AEPD).</p>
+
+      <h2>7. Menores</h2>
+      <p>La app no está dirigida a menores de 14 años.</p>
+
+      <h2>8. Cambios</h2>
+      <p>Si esta política cambia, se actualizará esta página y la fecha de arriba.</p>
+    </main>
+  </body>
+</html>
