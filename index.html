@@ -3,19 +3,640 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>¿Qué comemos?</title>
+    <title>¿Qué comemos? · Decide qué cocinar</title>
+    <meta name="description" content="La app que te ayuda a decidir qué cocinar, aprovechar lo que tienes en casa y comprar solo lo que necesitas. Gratis, sin cuenta y sin conexión." />
+    <meta name="theme-color" content="#3a7549" />
+    <meta property="og:title" content="¿Qué comemos?" />
+    <meta property="og:description" content="Decide qué cocinar, usa lo que tienes y compra solo lo que necesitas." />
+    <meta property="og:image" content="https://que-comemos.github.io/img/icon.png" />
+    <link rel="icon" href="img/icon.png" />
     <style>
-      body { margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; background: #faf7f2; color: #25231f; font: 17px/1.5 system-ui, sans-serif; text-align: center; }
-      @media (prefers-color-scheme: dark) { body { background: #1b1a17; color: #f2efe8; } a { color: #7dbb8a; } }
-      a { color: #3a7549; }
+      @font-face {
+        font-family: 'Nunito Sans';
+        src: url('fonts/NunitoSans_800ExtraBold.ttf') format('truetype');
+        font-weight: 800;
+        font-display: swap;
+      }
+
+      :root {
+        --bg: #faf7f2;
+        --bg-warm: #f3ece0;
+        --surface: #fffdfa;
+        --surface-soft: #f1ebe1;
+        --text: #25231f;
+        --text-soft: #5f5a52;
+        --muted: #6b665d;
+        --primary: #3a7549;
+        --primary-dark: #2a5634;
+        --primary-soft: #e0ede2;
+        --accent: #b84a28;
+        --accent-soft: #f8e2d8;
+        --border: #e7dfd3;
+        --tomato: #fde6dc;
+        --sea: #def0f6;
+        --sea-deep: #bcdcea;
+        --olive: #e7f1de;
+        --olive-deep: #cbe2b9;
+        --saffron: #fdf1d2;
+        --saffron-deep: #f8dd9c;
+        --berry: #f8e3ee;
+        --berry-deep: #edc4da;
+        --phone: #1f1d1a;
+        --shadow: 0 30px 60px -20px rgba(42, 86, 52, 0.35), 0 12px 24px -12px rgba(0, 0, 0, 0.18);
+        --display: 'Nunito Sans', ui-rounded, system-ui, sans-serif;
+        --body: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #1b1a17;
+          --bg-warm: #24211b;
+          --surface: #26241f;
+          --surface-soft: #2f2c26;
+          --text: #f2efe8;
+          --text-soft: #c9c3b8;
+          --muted: #aaa397;
+          --primary: #7dbb8a;
+          --primary-dark: #a6d4b0;
+          --primary-soft: #2a3a2d;
+          --accent: #ee9a7c;
+          --accent-soft: #43302a;
+          --border: #3a362f;
+          --tomato: #4a3028;
+          --sea: #263a42;
+          --sea-deep: #2f4b56;
+          --olive: #2e3a27;
+          --olive-deep: #3b4c31;
+          --saffron: #44391f;
+          --saffron-deep: #5a4a24;
+          --berry: #432c38;
+          --berry-deep: #573947;
+          --phone: #0c0b0a;
+          --shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.7), 0 12px 24px -12px rgba(0, 0, 0, 0.5);
+        }
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font: 17px/1.55 var(--body);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      img { display: block; max-width: 100%; }
+      a { color: var(--primary); }
+      h1, h2, h3 { font-family: var(--display); font-weight: 800; line-height: 1.1; margin: 0; letter-spacing: -0.01em; }
+      .wrap { width: min(1120px, 100% - 32px); margin-inline: auto; }
+
+      /* ---------- Cabecera ---------- */
+      .nav { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); background: color-mix(in srgb, var(--bg) 82%, transparent); border-bottom: 1px solid transparent; transition: border-color 0.3s; }
+      .nav.scrolled { border-color: var(--border); }
+      .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+      .brand { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 20px; color: var(--text); text-decoration: none; }
+      .brand img { width: 36px; height: 36px; border-radius: 10px; }
+      .nav a.link { color: var(--text-soft); text-decoration: none; font-weight: 600; font-size: 15px; }
+      .nav a.link:hover { color: var(--primary); }
+
+      /* ---------- Hero ---------- */
+      .hero { position: relative; padding: 56px 0 88px; overflow: hidden; }
+      .hero .wrap { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 48px; align-items: center; }
+      .blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.55; z-index: -1; animation: blob 18s ease-in-out infinite alternate; }
+      .blob.a { width: 460px; height: 460px; background: var(--olive-deep); top: -120px; right: -80px; }
+      .blob.b { width: 380px; height: 380px; background: var(--saffron-deep); bottom: -160px; left: -120px; animation-delay: -6s; }
+      .blob.c { width: 300px; height: 300px; background: var(--tomato); top: 40%; left: 45%; animation-delay: -12s; }
+      @keyframes blob { to { transform: translate(40px, 30px) scale(1.15); } }
+
+      .eyebrow { display: inline-flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+      .pill { padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); font-size: 14px; font-weight: 600; color: var(--text-soft); }
+      .hero h1 { font-size: clamp(44px, 7vw, 76px); }
+      .hero h1 .q { color: var(--primary); display: inline-block; animation: wobble 4s ease-in-out infinite; transform-origin: 50% 80%; }
+      @keyframes wobble { 0%, 70%, 100% { transform: rotate(0); } 78% { transform: rotate(-12deg); } 86% { transform: rotate(9deg); } 94% { transform: rotate(-4deg); } }
+      .hero p.lead { font-size: clamp(18px, 2.2vw, 22px); color: var(--text-soft); margin: 20px 0 32px; max-width: 34ch; }
+      .rotator { display: inline-grid; color: var(--accent); font-weight: 700; }
+      .rotator span { grid-area: 1 / 1; opacity: 0; transform: translateY(0.6em); animation: rotate 9s infinite; }
+      .rotator span:nth-child(2) { animation-delay: 3s; }
+      .rotator span:nth-child(3) { animation-delay: 6s; }
+      @keyframes rotate { 0% { opacity: 0; transform: translateY(0.6em); } 4%, 30% { opacity: 1; transform: none; } 34%, 100% { opacity: 0; transform: translateY(-0.6em); } }
+      .ctas { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+      .btn { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 22px; border-radius: 16px; font-weight: 700; text-decoration: none; font-size: 16px; transition: transform 0.2s, box-shadow 0.2s; }
+      .btn:hover { transform: translateY(-2px); }
+      .btn.play { background: var(--text); color: var(--bg); box-shadow: var(--shadow); }
+      .btn.play small { display: block; font-weight: 500; font-size: 12px; opacity: 0.8; line-height: 1.1; }
+      .btn.play b { display: block; font-size: 18px; line-height: 1.2; }
+      .btn.ghost { color: var(--primary); border: 2px solid var(--primary-soft); background: var(--surface); }
+
+      .stage { position: relative; display: grid; place-items: center; min-height: 600px; }
+      .sprite { position: absolute; width: 64px; animation: float 6s ease-in-out infinite; filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.12)); pointer-events: none; }
+      @keyframes float { 0%, 100% { transform: translateY(0) rotate(var(--r, 0deg)); } 50% { transform: translateY(-18px) rotate(calc(var(--r, 0deg) + 8deg)); } }
+
+      /* ---------- Teléfono ---------- */
+      .phone { position: relative; width: 290px; aspect-ratio: 9 / 18.5; border-radius: 44px; background: var(--phone); padding: 11px; box-shadow: var(--shadow); flex-shrink: 0; }
+      .phone::before { content: ''; position: absolute; top: 20px; left: 50%; width: 84px; height: 22px; border-radius: 999px; background: var(--phone); transform: translateX(-50%); z-index: 3; }
+      .screen { position: relative; height: 100%; border-radius: 34px; background: var(--bg); overflow: hidden; font-size: 12px; line-height: 1.35; display: flex; flex-direction: column; }
+      .status { height: 44px; flex-shrink: 0; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 22px 6px; font-size: 11px; font-weight: 700; color: var(--text); }
+      .app { flex: 1; padding: 6px 14px 0; display: flex; flex-direction: column; gap: 9px; overflow: hidden; }
+      .tabs { flex-shrink: 0; display: flex; justify-content: space-around; padding: 8px 6px 14px; border-top: 1px solid var(--border); background: var(--surface); font-size: 9px; color: var(--muted); text-align: center; }
+      .tabs div { display: grid; gap: 2px; }
+      .tabs i { font-style: normal; font-size: 16px; }
+      .tabs .on { color: var(--primary); font-weight: 700; }
+      .s-title { font-family: var(--display); font-weight: 800; font-size: 22px; }
+      .s-sub { color: var(--text-soft); margin-top: -6px; }
+      .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 10px 12px; }
+      .row { display: flex; align-items: center; gap: 8px; }
+      .grow { flex: 1; min-width: 0; }
+      .bold { font-weight: 700; }
+      .soft { color: var(--text-soft); }
+      .tiny { font-size: 10px; color: var(--muted); }
+      .chip { display: inline-block; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); font-size: 10px; font-weight: 600; white-space: nowrap; }
+      .chip.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+      /* Inicio */
+      .today { border-radius: 18px; padding: 12px; background: linear-gradient(140deg, var(--olive-deep), var(--olive)); position: relative; overflow: hidden; }
+      .today .kicker { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--primary-dark); }
+      .today .meal { display: flex; align-items: center; gap: 8px; margin-top: 8px; background: color-mix(in srgb, var(--surface) 80%, transparent); border-radius: 12px; padding: 7px 9px; }
+      .today .meal b { display: block; }
+      .notice { display: flex; gap: 8px; align-items: center; padding: 6px 0; }
+      .notice + .notice { border-top: 1px solid var(--border); }
+      .notice .e { font-size: 17px; width: 22px; text-align: center; }
+      .mini-btn { padding: 4px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-soft); font-weight: 700; font-size: 10px; }
+      .suggest { border-radius: 18px; padding: 12px; background: linear-gradient(140deg, var(--saffron-deep), var(--saffron)); display: flex; gap: 10px; align-items: center; }
+      .suggest .big { font-size: 34px; animation: bob 3s ease-in-out infinite; }
+      @keyframes bob { 50% { transform: translateY(-4px) rotate(-6deg); } }
+
+      /* Recetas */
+      .recipe { display: flex; gap: 10px; align-items: center; }
+      .recipe .pic { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; font-size: 24px; flex-shrink: 0; }
+      .meter { height: 5px; border-radius: 3px; background: var(--surface-soft); overflow: hidden; margin-top: 4px; }
+      .meter span { display: block; height: 100%; background: var(--primary); border-radius: 3px; transform-origin: left; animation: fill 2.4s ease-out both; }
+      @keyframes fill { from { transform: scaleX(0); } }
+      .tag { display: inline-block; margin-top: 4px; padding: 2px 7px; border-radius: 6px; background: var(--accent-soft); color: var(--accent); font-size: 9.5px; font-weight: 700; }
+
+      /* Plan */
+      .days { display: flex; gap: 5px; }
+      .days div { flex: 1; text-align: center; padding: 5px 0; border-radius: 10px; background: var(--surface); border: 1px solid var(--border); font-size: 10px; }
+      .days div b { display: block; font-size: 13px; }
+      .days .on { background: var(--primary); color: #fff; border-color: var(--primary); }
+      .dots { display: flex; gap: 2px; justify-content: center; margin-top: 2px; }
+      .dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.6; }
+      .slot .label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+      .check { width: 18px; height: 18px; border-radius: 6px; border: 2px solid var(--primary); flex-shrink: 0; display: grid; place-items: center; color: #fff; font-size: 11px; font-weight: 800; }
+      .check.done { background: var(--primary); }
+      .week-buy { border-radius: 14px; padding: 10px 12px; background: var(--primary); color: #fff; font-weight: 700; display: flex; justify-content: space-between; animation: pulse 2.6s ease-in-out infinite; }
+      @keyframes pulse { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary) 25%, transparent); } }
+
+      /* Compra */
+      .aisle { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 2px 0 -3px; }
+      .item { display: flex; align-items: center; gap: 9px; padding: 7px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+      .item .name { position: relative; flex: 1; font-weight: 600; }
+      .item .name::after { content: ''; position: absolute; left: 0; top: 50%; height: 2px; width: 100%; background: var(--text-soft); transform: scaleX(0); transform-origin: left; }
+      .item .box { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--primary); flex-shrink: 0; position: relative; }
+      .item .box::after { content: '✓'; position: absolute; inset: -2px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; transform: scale(0); }
+      .item.anim .name::after { animation: strike 8s infinite; animation-delay: var(--d); }
+      .item.anim .box::after { animation: tick 8s infinite; animation-delay: var(--d); }
+      .item.anim .name { animation: fade 8s infinite; animation-delay: var(--d); }
+      @keyframes strike { 0%, 8% { transform: scaleX(0); } 14%, 85% { transform: scaleX(1); } 92%, 100% { transform: scaleX(0); } }
+      @keyframes tick { 0%, 8% { transform: scale(0); } 12%, 85% { transform: scale(1); } 90%, 100% { transform: scale(0); } }
+      @keyframes fade { 0%, 10% { opacity: 1; } 16%, 85% { opacity: 0.5; } 92% { opacity: 1; } }
+      .who { padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 700; }
+      .toast { position: absolute; left: 12px; right: 12px; bottom: 64px; padding: 9px 12px; border-radius: 14px; background: var(--text); color: var(--bg); font-weight: 600; box-shadow: var(--shadow); animation: toast 8s infinite; }
+      @keyframes toast { 0%, 40% { opacity: 0; transform: translateY(20px); } 46%, 72% { opacity: 1; transform: none; } 78%, 100% { opacity: 0; transform: translateY(20px); } }
+      .members { display: flex; align-items: center; gap: 6px; padding: 8px 10px; border-radius: 12px; background: var(--sea); }
+      .members .av { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 10px; border: 2px solid var(--sea); margin-left: -8px; }
+      .members .av:first-child { margin-left: 0; }
+
+      /* Modo cocina */
+      .cook { background: var(--bg-warm); }
+      .step-n { font-size: 11px; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+      .step-t { font-size: 17px; font-weight: 600; line-height: 1.4; }
+      .ring { position: relative; width: 150px; height: 150px; margin: 6px auto; }
+      .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+      .ring circle { fill: none; stroke-width: 10; }
+      .ring .track { stroke: var(--surface-soft); }
+      .ring .bar { stroke: var(--accent); stroke-linecap: round; stroke-dasharray: 408; animation: timer 12s linear infinite; }
+      @keyframes timer { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 408; } }
+      .ring .time { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; font-family: var(--display); font-weight: 800; font-size: 30px; }
+      .ring .time small { display: block; font-family: var(--body); font-size: 10px; font-weight: 600; color: var(--muted); }
+      .steam { position: absolute; width: 46px; opacity: 0.8; animation: steam 3s ease-in-out infinite; }
+      @keyframes steam { 0% { transform: translateY(8px); opacity: 0; } 40% { opacity: 0.9; } 100% { transform: translateY(-16px); opacity: 0; } }
+      .big-btn { border-radius: 14px; padding: 11px; text-align: center; font-weight: 700; }
+
+      /* ---------- Secciones ---------- */
+      section { padding: 96px 0; position: relative; }
+      .center { text-align: center; }
+      .kicker { display: inline-block; font-size: 14px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+      h2 { font-size: clamp(32px, 4.6vw, 50px); }
+      .intro { color: var(--text-soft); font-size: 19px; max-width: 46ch; margin: 16px auto 0; }
+
+      /* El ciclo */
+      .loop { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 56px; position: relative; }
+      .loop::before { content: ''; position: absolute; top: 60px; left: 12%; right: 12%; height: 3px; background: repeating-linear-gradient(90deg, var(--border) 0 10px, transparent 10px 18px); z-index: -1; }
+      .loop .node { text-align: center; padding: 20px 14px; border-radius: 24px; background: var(--surface); border: 1px solid var(--border); transition: transform 0.4s, box-shadow 0.4s, border-color 0.4s; }
+      .loop .node img { width: 84px; margin: 0 auto 10px; transition: transform 0.4s; }
+      .loop .node h3 { font-size: 20px; }
+      .loop .node p { margin: 6px 0 0; font-size: 15px; color: var(--text-soft); }
+      .loop .node.lit { transform: translateY(-8px); border-color: var(--primary); box-shadow: var(--shadow); }
+      .loop .node.lit img { transform: scale(1.12) rotate(-4deg); }
+      .loop-back { margin-top: 22px; color: var(--muted); font-size: 15px; }
+
+      /* Funciones */
+      .feature { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+      .feature + .feature { margin-top: 120px; }
+      .feature.flip .copy { order: 2; }
+      .feature .copy h2 { font-size: clamp(30px, 4vw, 44px); }
+      .feature .copy p { color: var(--text-soft); font-size: 18px; margin: 16px 0 0; }
+      .feature ul { list-style: none; padding: 0; margin: 22px 0 0; display: grid; gap: 12px; }
+      .feature li { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; }
+      .feature li span { flex-shrink: 0; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; font-size: 16px; }
+      .feature .visual { position: relative; display: grid; place-items: center; padding: 40px 0; }
+      .feature .visual .halo { position: absolute; width: 380px; height: 380px; border-radius: 50%; z-index: -1; }
+      .feature .visual .scene { position: absolute; width: 140px; z-index: 2; animation: float 7s ease-in-out infinite; filter: drop-shadow(0 14px 18px rgba(0, 0, 0, 0.15)); }
+
+      /* Valores */
+      .values { background: var(--bg-warm); }
+      .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 48px; }
+      .value { padding: 26px 22px; border-radius: 24px; background: var(--surface); border: 1px solid var(--border); }
+      .value .e { font-size: 34px; }
+      .value h3 { font-size: 20px; margin-top: 10px; }
+      .value p { margin: 8px 0 0; color: var(--text-soft); font-size: 15px; }
+
+      /* Cierre */
+      .final { text-align: center; }
+      .final .box { position: relative; overflow: hidden; border-radius: 36px; padding: 72px 24px; background: linear-gradient(140deg, #3a7549, #2a5634); color: #fff; }
+      .final h2 { color: #fff; }
+      .final p { color: rgba(255, 255, 255, 0.85); font-size: 19px; max-width: 40ch; margin: 16px auto 28px; }
+      .final .btn.play { background: #fff; color: #25231f; }
+      .final .sprite { width: 72px; opacity: 0.9; }
+      footer { padding: 40px 0 56px; color: var(--muted); font-size: 15px; }
+      footer .wrap { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+      footer nav { display: flex; gap: 20px; }
+
+      /* Aparecer al hacer scroll */
+      .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
+      .reveal.in { opacity: 1; transform: none; }
+      .reveal.d1 { transition-delay: 0.12s; }
+      .reveal.d2 { transition-delay: 0.24s; }
+      .reveal.d3 { transition-delay: 0.36s; }
+
+      /* ---------- Móvil ---------- */
+      @media (max-width: 900px) {
+        .hero .wrap, .feature { grid-template-columns: 1fr; gap: 32px; }
+        .hero { text-align: center; padding-top: 32px; }
+        .hero p.lead { margin-inline: auto; }
+        .ctas, .eyebrow { justify-content: center; }
+        .stage { min-height: 560px; }
+        .feature.flip .copy { order: 0; }
+        .feature + .feature { margin-top: 80px; }
+        .loop, .grid4 { grid-template-columns: 1fr 1fr; }
+        .loop::before { display: none; }
+        section { padding: 72px 0; }
+        .nav a.link.hide-sm { display: none; }
+      }
+      @media (max-width: 420px) {
+        .phone { width: 260px; }
+        .loop, .grid4 { grid-template-columns: 1fr; }
+        .feature .visual .halo { width: 300px; height: 300px; }
+        .feature .visual .scene { width: 100px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { animation: none !important; transition: none !important; }
+        .reveal { opacity: 1; transform: none; }
+        .rotator span:first-child { opacity: 1; transform: none; }
+        .item.anim:nth-of-type(odd) .name::after { transform: scaleX(1); }
+        .toast { opacity: 1; transform: none; }
+        html { scroll-behavior: auto; }
+      }
     </style>
   </head>
   <body>
-    <main>
-      <div style="font-size: 56px" aria-hidden="true">🍲</div>
-      <h1>¿Qué comemos?</h1>
-      <p>Decide qué cocinar, usa lo que tienes y compra solo lo que necesitas.</p>
-      <p><a href="privacy/">Política de privacidad</a></p>
+    <header class="nav" id="nav">
+      <div class="wrap">
+        <a class="brand" href="#top"><img src="img/icon.png" alt="" width="36" height="36" />¿Qué comemos?</a>
+        <nav style="display: flex; gap: 22px">
+          <a class="link hide-sm" href="#como">Cómo funciona</a>
+          <a class="link hide-sm" href="#compartir">Lista compartida</a>
+          <a class="link" href="privacy/">Privacidad</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <!-- ============ HERO ============ -->
+      <section class="hero">
+        <div class="blob a"></div>
+        <div class="blob b"></div>
+        <div class="blob c"></div>
+        <div class="wrap">
+          <div>
+            <div class="eyebrow reveal">
+              <span class="pill">🆓 Gratis</span>
+              <span class="pill">🔒 Sin cuenta</span>
+              <span class="pill">📴 Funciona sin conexión</span>
+            </div>
+            <h1 class="reveal d1">¿Qué <span style="white-space: nowrap">comemos<span class="q">?</span></span></h1>
+            <p class="lead reveal d2">
+              Decide qué cocinar,
+              <span class="rotator"><span>usa lo que tienes</span><span>planifica la semana</span><span>compra en pareja</span></span>
+              y deja de tirar comida.
+            </p>
+            <div class="ctas reveal d3">
+              <span class="btn play" aria-label="Próximamente en Google Play">
+                <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><path fill="#34a853" d="M1 1l13 13L1 27c-.6-.3-1-1-1-1.8V2.8C0 2 .4 1.3 1 1z"/><path fill="#fbbc04" d="M18.4 9.6L14 14l4.4 4.4 5-2.8c1.4-.8 1.4-2.4 0-3.2z"/><path fill="#4285f4" d="M14 14L1 27c.5.3 1.2.3 1.9-.1l15.5-8.5z"/><path fill="#ea4335" d="M14 14L18.4 9.6 2.9 1.1C2.2.7 1.5.7 1 1z"/></svg>
+                <span><small>Próximamente en</small><b>Google Play</b></span>
+              </span>
+              <a class="btn ghost" href="#como">Cómo funciona ↓</a>
+            </div>
+          </div>
+
+          <div class="stage reveal d2">
+            <img class="sprite" src="img/sprite-tomato.png" alt="" style="top: 6%; left: 6%; --r: -10deg" />
+            <img class="sprite" src="img/sprite-carrot.png" alt="" style="top: 18%; right: 2%; --r: 20deg; animation-delay: -2s" />
+            <img class="sprite" src="img/sprite-egg.png" alt="" style="bottom: 16%; left: 0; animation-delay: -4s; width: 54px" />
+            <img class="sprite" src="img/sprite-lemon.png" alt="" style="bottom: 6%; right: 8%; --r: -16deg; animation-delay: -1s" />
+            <img class="sprite" src="img/sprite-sparkle.png" alt="" style="top: 2%; right: 26%; width: 40px; animation-delay: -3s" />
+
+            <!-- Pantalla: Inicio -->
+            <div class="phone" role="img" aria-label="La pantalla de Inicio de la app: la sugerencia del día, las comidas de hoy y los avisos">
+              <div class="screen">
+                <div class="status"><span>9:41</span><span>●●● 🔋</span></div>
+                <div class="app">
+                  <div class="s-title">Buenos días</div>
+                  <div class="s-sub">¿Qué cocinamos hoy?</div>
+                  <div class="suggest">
+                    <div class="big">🥘</div>
+                    <div class="grow">
+                      <div class="tiny" style="color: inherit; font-weight: 700">✨ SUGERENCIA DEL DÍA</div>
+                      <div class="bold" style="font-size: 14px">Lentejas estofadas</div>
+                      <div class="soft">Tienes todo · 45 min</div>
+                    </div>
+                  </div>
+                  <div class="today">
+                    <div class="kicker">Hoy · jueves 2 de octubre</div>
+                    <div class="meal"><span style="font-size: 18px">🍝</span><div class="grow"><span class="tiny">Comida</span><b>Espaguetis a la boloñesa</b></div></div>
+                    <div class="meal"><span style="font-size: 18px">🥗</span><div class="grow"><span class="tiny">Cena</span><b>Ensalada de garbanzos</b></div></div>
+                  </div>
+                  <div class="card">
+                    <div class="bold" style="font-size: 13px; margin-bottom: 2px">Para tener en cuenta</div>
+                    <div class="notice"><span class="e">❄️</span><div class="grow"><b>Saca del congelador para mañana</b><div class="tiny">Pollo (Pollo al curry)</div></div></div>
+                    <div class="notice"><span class="e">⏰</span><div class="grow"><b>Úsalo pronto</b><div class="tiny">Espinacas: caduca mañana</div></div></div>
+                    <div class="notice"><span class="e">🛒</span><div class="grow"><b>Compra</b><div class="tiny">7 cosas pendientes · 👥 compartida</div></div></div>
+                  </div>
+                </div>
+                <div class="tabs">
+                  <div class="on"><i>🏠</i>Inicio</div><div><i>📅</i>Plan</div><div><i>🛒</i>Compra</div><div><i>🧺</i>Casa</div><div><i>📖</i>Recetas</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ EL CICLO ============ -->
+      <section id="como">
+        <div class="wrap center">
+          <span class="kicker reveal">Cómo funciona</span>
+          <h2 class="reveal d1">Todo conectado, de la nevera al plato</h2>
+          <p class="intro reveal d2">Lo que tienes en casa decide las recetas, las recetas llenan tu semana y la semana hace la lista de la compra. Tú solo confirmas.</p>
+          <div class="loop" id="loop">
+            <div class="node reveal"><img src="img/scene-fridge.png" alt="" /><h3>Lo que tienes</h3><p>Apunta lo que hay en casa (si quieres: es opcional).</p></div>
+            <div class="node reveal d1"><img src="img/scene-pot.png" alt="" /><h3>Qué cocinar</h3><p>Recetas que puedes hacer ya, primero lo que caduca.</p></div>
+            <div class="node reveal d2"><img src="img/scene-plan.png" alt="" /><h3>Tu semana</h3><p>Planifica comidas y cenas, con sobras para otro día.</p></div>
+            <div class="node reveal d3"><img src="img/scene-bag.png" alt="" /><h3>La compra</h3><p>Solo lo que falta, por pasillos y compartida.</p></div>
+          </div>
+          <p class="loop-back reveal">↺ Y lo que compras vuelve a tu casa con un toque.</p>
+        </div>
+      </section>
+
+      <!-- ============ FUNCIONES ============ -->
+      <section style="padding-top: 24px">
+        <div class="wrap">
+          <!-- ¿Qué puedo cocinar? -->
+          <div class="feature">
+            <div class="copy">
+              <span class="kicker reveal">¿Qué puedo cocinar?</span>
+              <h2 class="reveal d1">Abre la nevera… y la app te dice qué hacer</h2>
+              <p class="reveal d2">Más de 200 recetas caseras que se ordenan según lo que tienes. Si algo está a punto de caducar, primero las que lo aprovechan.</p>
+              <ul>
+                <li class="reveal d2"><span style="background: var(--olive)">✅</span>Ves cuántos ingredientes tienes de cada receta.</li>
+                <li class="reveal d3"><span style="background: var(--tomato)">⏰</span>Lo que caduca pronto, primero.</li>
+                <li class="reveal d3"><span style="background: var(--saffron)">⚡</span>Modo rápido: elige ingredientes sin tocar tu inventario.</li>
+              </ul>
+            </div>
+            <div class="visual reveal d1">
+              <div class="halo" style="background: var(--saffron)"></div>
+              <img class="scene" src="img/scene-basket.png" alt="" style="top: 0; right: 4%" />
+              <div class="phone" role="img" aria-label="Recetas ordenadas según lo que tienes en casa">
+                <div class="screen">
+                  <div class="status"><span>9:41</span><span>●●● 🔋</span></div>
+                  <div class="app">
+                    <div class="s-title">¿Qué puedo cocinar?</div>
+                    <div class="row" style="gap: 5px; flex-wrap: wrap"><span class="chip on">Con lo que tengo</span><span class="chip">⚡ Rápido</span><span class="chip">🌱 Temporada</span></div>
+                    <div class="card recipe"><div class="pic" style="background: var(--olive)">🥬</div><div class="grow"><b>Tortilla de espinacas</b><div class="tiny">Tienes 5 de 5 · 20 min</div><div class="meter"><span style="width: 100%"></span></div><span class="tag">Aprovecha: espinacas</span></div></div>
+                    <div class="card recipe"><div class="pic" style="background: var(--tomato)">🍅</div><div class="grow"><b>Pasta con tomate y atún</b><div class="tiny">Tienes 4 de 5 · 15 min</div><div class="meter"><span style="width: 80%; animation-delay: 0.2s"></span></div></div></div>
+                    <div class="card recipe"><div class="pic" style="background: var(--sea)">🐟</div><div class="grow"><b>Merluza en salsa verde</b><div class="tiny">Tienes 4 de 6 · 30 min</div><div class="meter"><span style="width: 66%; animation-delay: 0.4s"></span></div></div></div>
+                    <div class="card recipe"><div class="pic" style="background: var(--saffron)">🍳</div><div class="grow"><b>Huevos rotos</b><div class="tiny">Tienes 3 de 4 · 25 min</div><div class="meter"><span style="width: 75%; animation-delay: 0.6s"></span></div></div></div>
+                  </div>
+                  <div class="tabs"><div><i>🏠</i>Inicio</div><div><i>📅</i>Plan</div><div><i>🛒</i>Compra</div><div><i>🧺</i>Casa</div><div class="on"><i>📖</i>Recetas</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Plan -->
+          <div class="feature flip">
+            <div class="copy">
+              <span class="kicker reveal">Plan semanal</span>
+              <h2 class="reveal d1">Tu semana, resuelta en un minuto</h2>
+              <p class="reveal d2">Rellena la semana con un toque o elige plato a plato. Cocina de más y apunta las sobras para otro día.</p>
+              <ul>
+                <li class="reveal d2"><span style="background: var(--olive)">🪄</span>Rellenar la semana automáticamente, a tu gusto.</li>
+                <li class="reveal d3"><span style="background: var(--saffron)">🥡</span>Sobras: cocina una vez, come dos.</li>
+                <li class="reveal d3"><span style="background: var(--sea)">🛒</span>La compra de la semana, sin repetir lo que ya tienes.</li>
+              </ul>
+            </div>
+            <div class="visual reveal d1">
+              <div class="halo" style="background: var(--olive)"></div>
+              <img class="scene" src="img/scene-plan.png" alt="" style="top: 2%; left: 2%" />
+              <div class="phone" role="img" aria-label="El plan de la semana con las comidas de cada día">
+                <div class="screen">
+                  <div class="status"><span>9:41</span><span>●●● 🔋</span></div>
+                  <div class="app">
+                    <div class="s-title">Plan</div>
+                    <div class="days">
+                      <div>L<b>29</b><span class="dots"><i></i><i></i></span></div><div>M<b>30</b><span class="dots"><i></i><i></i></span></div><div>X<b>1</b><span class="dots"><i></i></span></div><div class="on">J<b>2</b><span class="dots"><i></i><i></i></span></div><div>V<b>3</b><span class="dots"><i></i></span></div><div>S<b>4</b></div><div>D<b>5</b></div>
+                    </div>
+                    <div class="week-buy"><span>🛒 Compra de la semana</span><span>· 7</span></div>
+                    <div class="card slot"><div class="label">Comida</div><div class="row" style="margin-top: 6px"><span class="check done">✓</span><span style="font-size: 18px">🍝</span><div class="grow"><b style="text-decoration: line-through; opacity: 0.6">Espaguetis a la boloñesa</b></div></div></div>
+                    <div class="card slot"><div class="label">Cena</div><div class="row" style="margin-top: 6px"><span class="check"></span><span style="font-size: 18px">🥗</span><div class="grow"><b>Ensalada de garbanzos</b><div class="tiny">🥡 Sobras mañana</div></div></div></div>
+                    <div class="card slot" style="border-style: dashed; text-align: center; color: var(--primary); font-weight: 700">＋ Añadir merienda</div>
+                  </div>
+                  <div class="tabs"><div><i>🏠</i>Inicio</div><div class="on"><i>📅</i>Plan</div><div><i>🛒</i>Compra</div><div><i>🧺</i>Casa</div><div><i>📖</i>Recetas</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Lista compartida -->
+          <div class="feature" id="compartir">
+            <div class="copy">
+              <span class="kicker reveal">Lista compartida</span>
+              <h2 class="reveal d1">Haced la compra a cuatro manos</h2>
+              <p class="reveal d2">Comparte la lista con tu pareja o con quien viva contigo. Lo que uno apunta o tacha, el otro lo ve al momento. Sin registrarse.</p>
+              <ul>
+                <li class="reveal d2"><span style="background: var(--sea)">👥</span>Invita con un enlace o un código QR.</li>
+                <li class="reveal d3"><span style="background: var(--berry)">🏷️</span>Sabes quién ha apuntado cada cosa.</li>
+                <li class="reveal d3"><span style="background: var(--saffron)">🏪</span>Modo tienda: letras grandes y la pantalla siempre encendida.</li>
+              </ul>
+            </div>
+            <div class="visual reveal d1">
+              <div class="halo" style="background: var(--sea)"></div>
+              <img class="scene" src="img/scene-bag.png" alt="" style="bottom: 0; right: 0" />
+              <div class="phone" role="img" aria-label="La lista de la compra compartida, con quién ha apuntado cada cosa">
+                <div class="screen">
+                  <div class="status"><span>9:41</span><span>●●● 🔋</span></div>
+                  <div class="app">
+                    <div class="row"><div class="s-title grow">Compra</div><span class="chip">🏪 Modo tienda</span></div>
+                    <div class="members"><span class="av" style="background: var(--berry-deep)">A</span><span class="av" style="background: var(--saffron-deep)">L</span><span class="grow bold" style="margin-left: 4px">Lista compartida · 2 personas</span></div>
+                    <div class="aisle">Frutas y verduras</div>
+                    <div class="item anim" style="--d: 0s"><span class="box"></span><span class="name">Tomates · 1 kg</span></div>
+                    <div class="item"><span class="box"></span><span class="name">Plátanos</span><span class="who" style="background: var(--berry-deep)">Ana</span></div>
+                    <div class="aisle">Lácteos y huevos</div>
+                    <div class="item anim" style="--d: 1.2s"><span class="box"></span><span class="name">Leche · 6 l</span></div>
+                    <div class="item"><span class="box"></span><span class="name">Huevos · 12</span><span class="who" style="background: var(--saffron-deep)">Leo</span></div>
+                    <div class="aisle">Despensa</div>
+                    <div class="item anim" style="--d: 2.4s"><span class="box"></span><span class="name">Garbanzos</span><span class="who" style="background: var(--berry-deep)">Ana</span></div>
+                  </div>
+                  <div class="toast">👋 Ana ha añadido plátanos y garbanzos</div>
+                  <div class="tabs"><div><i>🏠</i>Inicio</div><div><i>📅</i>Plan</div><div class="on"><i>🛒</i>Compra</div><div><i>🧺</i>Casa</div><div><i>📖</i>Recetas</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Modo cocina -->
+          <div class="feature flip">
+            <div class="copy">
+              <span class="kicker reveal">Modo cocina</span>
+              <h2 class="reveal d1">Paso a paso, con las manos en la masa</h2>
+              <p class="reveal d2">Pasos grandes, la pantalla que no se apaga y temporizadores para cada paso. Y al terminar, la app descuenta de tu inventario lo que has usado.</p>
+              <ul>
+                <li class="reveal d2"><span style="background: var(--tomato)">⏱️</span>Temporizadores en cada paso, aunque sean varios a la vez.</li>
+                <li class="reveal d3"><span style="background: var(--olive)">✍️</span>Crea tus recetas, con fotos y pasos.</li>
+                <li class="reveal d3"><span style="background: var(--saffron)">🧮</span>Cantidades ajustadas a cuántos sois en casa.</li>
+              </ul>
+            </div>
+            <div class="visual reveal d1">
+              <div class="halo" style="background: var(--tomato)"></div>
+              <img class="scene" src="img/scene-pot.png" alt="" style="top: 0; left: 0" />
+              <div class="phone" role="img" aria-label="El modo cocina: un paso de la receta con su temporizador">
+                <div class="screen cook">
+                  <div class="status"><span>9:41</span><span>●●● 🔋</span></div>
+                  <div class="app" style="gap: 12px">
+                    <div class="row"><span class="soft grow">Lentejas estofadas</span><span class="tiny">✕</span></div>
+                    <div class="meter" style="height: 6px"><span style="width: 60%"></span></div>
+                    <div class="step-n">Paso 3 de 5</div>
+                    <div class="step-t">Añade las lentejas y el caldo. Cuece a fuego medio hasta que estén tiernas.</div>
+                    <div class="ring" style="position: relative">
+                      <img class="steam" src="img/sprite-pepper.png" alt="" style="display: none" />
+                      <svg viewBox="0 0 150 150" aria-hidden="true"><circle class="track" cx="75" cy="75" r="65" /><circle class="bar" cx="75" cy="75" r="65" /></svg>
+                      <div class="time"><div><span id="clock">25:00</span><small>Cocer</small></div></div>
+                    </div>
+                    <div class="row" style="gap: 8px"><div class="big-btn grow" style="background: var(--surface); border: 1px solid var(--border)">← Anterior</div><div class="big-btn grow" style="background: var(--primary); color: #fff">Siguiente →</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ VALORES ============ -->
+      <section class="values">
+        <div class="wrap center">
+          <span class="kicker reveal">Hecha con cariño</span>
+          <h2 class="reveal d1">Tu cocina es tuya</h2>
+          <p class="intro reveal d2">Sin registros, sin seguimiento y sin letra pequeña.</p>
+          <div class="grid4" style="text-align: left">
+            <div class="value reveal"><div class="e">🔒</div><h3>Sin cuenta</h3><p>Abres la app y empiezas. Ni email ni contraseña.</p></div>
+            <div class="value reveal d1"><div class="e">📱</div><h3>En tu móvil</h3><p>Tus recetas, tu plan y tu despensa se guardan en tu teléfono.</p></div>
+            <div class="value reveal d2"><div class="e">📴</div><h3>Sin conexión</h3><p>Funciona en el súper aunque no haya cobertura.</p></div>
+            <div class="value reveal d3"><div class="e">🆓</div><h3>Gratis</h3><p>Con anuncios discretos, nunca mientras cocinas.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ CIERRE ============ -->
+      <section class="final">
+        <div class="wrap">
+          <div class="box reveal">
+            <img class="sprite" src="img/sprite-leaf.png" alt="" style="top: 14%; left: 6%" />
+            <img class="sprite" src="img/sprite-mushroom.png" alt="" style="bottom: 12%; left: 14%; animation-delay: -3s" />
+            <img class="sprite" src="img/sprite-pepper.png" alt="" style="top: 18%; right: 8%; animation-delay: -1.5s" />
+            <img class="sprite" src="img/sprite-tomato.png" alt="" style="bottom: 10%; right: 14%; animation-delay: -4.5s; width: 56px" />
+            <h2>Hoy ya sabes qué comer</h2>
+            <p>Muy pronto en Google Play para Android. Gratis.</p>
+            <span class="btn play" aria-label="Próximamente en Google Play">
+              <svg width="26" height="28" viewBox="0 0 26 28" aria-hidden="true"><path fill="#34a853" d="M1 1l13 13L1 27c-.6-.3-1-1-1-1.8V2.8C0 2 .4 1.3 1 1z"/><path fill="#fbbc04" d="M18.4 9.6L14 14l4.4 4.4 5-2.8c1.4-.8 1.4-2.4 0-3.2z"/><path fill="#4285f4" d="M14 14L1 27c.5.3 1.2.3 1.9-.1l15.5-8.5z"/><path fill="#ea4335" d="M14 14L18.4 9.6 2.9 1.1C2.2.7 1.5.7 1 1z"/></svg>
+              <span><small>Próximamente en</small><b>Google Play</b></span>
+            </span>
+          </div>
+        </div>
+      </section>
     </main>
+
+    <footer>
+      <div class="wrap">
+        <span>© 2026 ¿Qué comemos?</span>
+        <nav><a href="privacy/">Política de privacidad</a></nav>
+      </div>
+    </footer>
+
+    <script>
+      (function () {
+        var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Aparecer al hacer scroll.
+        var items = document.querySelectorAll('.reveal');
+        if (reduce || !('IntersectionObserver' in window)) {
+          items.forEach(function (el) { el.classList.add('in'); });
+        } else {
+          var io = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); }
+            });
+          }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+          items.forEach(function (el) {
+            // Lo que ya se ve al cargar aparece enseguida (sin esperar al observador, que algunos navegadores retrasan).
+            if (el.getBoundingClientRect().top < window.innerHeight) requestAnimationFrame(function () { el.classList.add('in'); });
+            else io.observe(el);
+          });
+        }
+
+        // Borde de la cabecera al bajar.
+        var nav = document.getElementById('nav');
+        window.addEventListener('scroll', function () { nav.classList.toggle('scrolled', window.scrollY > 8); }, { passive: true });
+
+        if (reduce) return;
+
+        // El ciclo se ilumina paso a paso.
+        var nodes = document.querySelectorAll('#loop .node');
+        var lit = 0;
+        setInterval(function () {
+          nodes.forEach(function (node, index) { node.classList.toggle('lit', index === lit); });
+          lit = (lit + 1) % nodes.length;
+        }, 1600);
+
+        // El temporizador del modo cocina cuenta hacia atrás (en bucle, con el anillo).
+        var clock = document.getElementById('clock');
+        var start = Date.now();
+        setInterval(function () {
+          var left = 25 * 60 - Math.floor(((Date.now() - start) % 12000) / 12000 * 25 * 60);
+          var m = Math.floor(left / 60), s = left % 60;
+          clock.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        }, 250);
+      })();
+    </script>
   </body>
 </html>
